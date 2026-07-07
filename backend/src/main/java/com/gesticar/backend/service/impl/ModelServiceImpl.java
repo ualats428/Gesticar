@@ -79,8 +79,7 @@ public class ModelServiceImpl implements ModelService {
 
     private Model getModelOrThrow(Long id) {
         return modelRepository.findById(id)
-                .orElseThrow(() ->
-                        new ModelNotFoundException("Model not found with id: " + id));
+                .orElseThrow(() -> new ModelNotFoundException(id));
     }
 
     private Brand getBrandOrThrow(Long brandId) {

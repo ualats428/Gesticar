@@ -9,6 +9,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+/**
+ * Global exception handler for REST controllers.
+ *
+ * @author Alejandro Tárraga
+ * @since 1.0
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -17,15 +23,7 @@ public class GlobalExceptionHandler {
             BrandNotFoundException ex,
             HttpServletRequest request) {
 
-        ErrorResponseDTO error = new ErrorResponseDTO(
-                LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return buildErrorResponse(ex, request, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BrandAlreadyExistsException.class)
@@ -33,15 +31,7 @@ public class GlobalExceptionHandler {
             BrandAlreadyExistsException ex,
             HttpServletRequest request) {
 
-        ErrorResponseDTO error = new ErrorResponseDTO(
-                LocalDateTime.now(),
-                HttpStatus.CONFLICT.value(),
-                HttpStatus.CONFLICT.getReasonPhrase(),
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return buildErrorResponse(ex, request, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ModelNotFoundException.class)
@@ -49,15 +39,7 @@ public class GlobalExceptionHandler {
             ModelNotFoundException ex,
             HttpServletRequest request) {
 
-        ErrorResponseDTO error = new ErrorResponseDTO(
-                LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                ex.getMessage(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        return buildErrorResponse(ex, request, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ModelAlreadyExistsException.class)
@@ -65,15 +47,42 @@ public class GlobalExceptionHandler {
             ModelAlreadyExistsException ex,
             HttpServletRequest request) {
 
+        return buildErrorResponse(ex, request, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(EngineNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEngineNotFound(
+            EngineNotFoundException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(ex, request, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EngineAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponseDTO> handleEngineAlreadyExists(
+            EngineAlreadyExistsException ex,
+            HttpServletRequest request) {
+
+        return buildErrorResponse(ex, request, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Builds a standardized error response.
+     */
+    private ResponseEntity<ErrorResponseDTO> buildErrorResponse(
+            RuntimeException ex,
+            HttpServletRequest request,
+            HttpStatus status) {
+
         ErrorResponseDTO error = new ErrorResponseDTO(
                 LocalDateTime.now(),
-                HttpStatus.CONFLICT.value(),
-                HttpStatus.CONFLICT.getReasonPhrase(),
+                status.value(),
+                status.getReasonPhrase(),
                 ex.getMessage(),
                 request.getRequestURI()
         );
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+        return ResponseEntity.status(status).body(error);
     }
 
 }
