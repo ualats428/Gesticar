@@ -1,37 +1,14 @@
-package com.gesticar.backend.entity;
+package com.gesticar.backend.dto.model;
 
-import jakarta.persistence.*;
+public class ModelRequestDTO {
 
-@Entity
-@Table(name = "model")
-public class Model {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
     private String name;
-
     private String generation;
-
     private Integer startYear;
-
     private Integer endYear;
+    private Long brandId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "brand_id", nullable = false)
-    private Brand brand;
-
-    public Model() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public ModelRequestDTO() {
     }
 
     public String getName() {
@@ -66,11 +43,11 @@ public class Model {
         this.endYear = endYear;
     }
 
-    public Brand getBrand() {
-        return brand;
+    public Long getBrandId() {
+        return brandId;
     }
 
-    public void setBrand(Brand brand) {
-        this.brand = brand;
+    public void setBrandId(Long brandId) {
+        this.brandId = brandId;
     }
 }
